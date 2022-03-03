@@ -1,6 +1,10 @@
 package number_dash_text
 
-import "errors"
+import (
+	"errors"
+	"strings"
+	"unicode"
+)
 
 type states struct {
 	Shortest string
@@ -11,12 +15,47 @@ type states struct {
 
 var InvalidInput = errors.New("invalid input")
 
+func isDigit(word string) bool {
+	for _, letter := range word {
+		if !unicode.IsDigit(letter) {
+			return false
+		}
+	}
+	return true
+}
+
+func isLetter(word string) bool {
+	for _, letter := range word {
+		if !unicode.IsLetter(letter) {
+			return false
+		}
+	}
+	return true
+}
+
 /**
 testValidity check the input string's format is number-text-number-text
 the time difficulty should be O(n)
  */
 func testValidity(input string) bool {
-	return false
+	if len(input) == 0 {
+		return false
+	}
+
+	strAry := strings.Split(input, "-")
+	if len(strAry) % 2 != 0 {
+		return false
+	}
+
+	for i := 0; i < len(strAry); i += 2 {
+		a := strAry[i]
+		b := strAry[i+1]
+
+		if !isDigit(a) || !isLetter(b) {
+			return false
+		}
+	}
+	return true
 }
 
 /**
