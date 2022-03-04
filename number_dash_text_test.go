@@ -88,3 +88,8 @@ func TestStoryStats(t *testing.T) {
 	assert.Equal(t, 3.3333333333333335, stats.AverWordLength)
 	assert.Equal(t, []string{"caba", "haha"}, stats.AverWordLengthText)
 }
+
+func TestGenerateWord(t *testing.T) {
+	assert.False(t, testValidity(generateWord(false)))
+	assert.True(t, testValidity(generateWord(true)))
+}

@@ -192,14 +192,11 @@ func storyStats(input string) (*Stats, error) {
 
 
 /**
-wholeStory that takes the string, and returns a text that is composed from all the text words separated by spaces,
-e.g. story called for the string 1-hello-2-world should return text: "hello world"
-the time difficulty should be O(n)
+generateWord that takes boolean flag and generates random correct strings if the parameter is true and random incorrect strings if the flag is false
 */
-func generateValidWord(input string) (string, error) {
-	rst, err := extractInput(input)
-	if err != nil {
-		return "", err
+func generateWord(flag bool) string {
+	if flag {
+		return fmt.Sprintf("%s-%s", RandomNumberString(2), RandomString(2))
 	}
-	return strings.Join(rst.StringAry, " "), nil
+	return RandomNumberString(2)
 }
