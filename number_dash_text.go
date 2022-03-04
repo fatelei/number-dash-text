@@ -3,15 +3,16 @@ package number_dash_text
 import (
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
-type states struct {
+type Stats struct {
 	Shortest           string
 	Longest            string
-	AverWordLength     float32
+	AverWordLength     float64
 	AverWordLengthText []string
 }
 
@@ -130,6 +131,75 @@ function storyStats that returns four things:
 	-the list (or empty list) of all words from the story that have the length the same as the average length rounded up and down.
 the time difficulty should be O(n)
 */
-func storyStats(input string) (*states, error) {
-	return &states{}, nil
+func storyStats(input string) (*Stats, error) {
+	rst, err := extractInput(input)
+	if err != nil {
+		return nil, err
+	}
+
+	var shortest string
+	var longest string
+	totalWordLength := 0
+
+	flagLong := -1
+	flagShort := 0xfffffffff
+
+	lengthToWordMap := make(map[int][]string)
+	totalWords := len(rst.StringAry)
+
+	for _, word := range rst.StringAry {
+		wordLen := len(word)
+		totalWordLength += wordLen
+		if wordLen > flagLong {
+			flagLong = wordLen
+			longest = word
+		}
+
+		if wordLen < flagShort {
+			flagShort = wordLen
+			shortest = word
+		}
+
+		if _, ok := lengthToWordMap[wordLen]; ok {
+			lengthToWordMap[wordLen] = append(lengthToWordMap[wordLen], word)
+		} else {
+			lengthToWordMap[wordLen] = make([]string, 0, totalWords)
+			lengthToWordMap[wordLen] = append(lengthToWordMap[wordLen], word)
+		}
+	}
+
+	stats := Stats{}
+	avg := float64(totalWordLength) / float64(totalWords)
+	stats.Longest = longest
+	stats.Shortest = shortest
+	stats.AverWordLength = avg
+	stats.AverWordLengthText = make([]string, 0, totalWords)
+
+	roundUp := int(math.Ceil(avg))
+	roundDown := int(math.Floor(avg))
+
+	if v, ok := lengthToWordMap[roundUp]; ok {
+		stats.AverWordLengthText = append(stats.AverWordLengthText, v...)
+	}
+
+	if roundDown != roundUp {
+		if v, ok := lengthToWordMap[roundDown]; ok {
+			stats.AverWordLengthText = append(stats.AverWordLengthText, v...)
+		}
+	}
+	return &stats, nil
+}
+
+
+/**
+wholeStory that takes the string, and returns a text that is composed from all the text words separated by spaces,
+e.g. story called for the string 1-hello-2-world should return text: "hello world"
+the time difficulty should be O(n)
+*/
+func generateValidWord(input string) (string, error) {
+	rst, err := extractInput(input)
+	if err != nil {
+		return "", err
+	}
+	return strings.Join(rst.StringAry, " "), nil
 }

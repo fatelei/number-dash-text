@@ -66,3 +66,25 @@ func TestForWholeStory(t *testing.T) {
 	assert.True(t, err == nil)
 	assert.Equal(t, "ab caba haha", story)
 }
+
+func TestStoryStats(t *testing.T) {
+	invalidWords := []string{"a", "a-1", "a-a", "1-a-2"}
+	for _, word := range invalidWords {
+		_, err := storyStats(word)
+		assert.True(t, errors.Is(err, InvalidInput))
+	}
+
+	stats, err := storyStats("2-a-2-b")
+	assert.True(t, err == nil)
+	assert.Equal(t, "a", stats.Shortest)
+	assert.Equal(t, "a", stats.Longest)
+	assert.Equal(t, 1.0, stats.AverWordLength)
+	assert.Equal(t, []string{"a", "b"}, stats.AverWordLengthText)
+
+	stats, err = storyStats("23-ab-48-caba-56-haha")
+	assert.True(t, err == nil)
+	assert.Equal(t, "ab", stats.Shortest)
+	assert.Equal(t, "caba", stats.Longest)
+	assert.Equal(t, 3.3333333333333335, stats.AverWordLength)
+	assert.Equal(t, []string{"caba", "haha"}, stats.AverWordLengthText)
+}
