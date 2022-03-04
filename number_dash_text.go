@@ -63,7 +63,6 @@ func extractInput(input string) (rst *extractResult, err error) {
 		rst.NumAry = append(rst.NumAry, intA)
 		rst.StringAry = append(rst.StringAry, b)
 	}
-	fmt.Printf("%+v\n", rst)
 	return rst, nil
 }
 
